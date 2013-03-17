@@ -1,11 +1,11 @@
-@(results: Seq[String], dlinks: Seq[DialogLink], links: Seq[LinkButton])
+@(title: String, results: Seq[String], dlinks: Seq[DialogLink], links: Seq[LinkButton])
 
 @main("Zombicide"){
 	<div class="toolbar">
 		<h1 id="pageTitle"></h1>
 	</div>
 
-    <div id="screen1" title="Zombicide" selected="true" class="panel">
+    <div id="screen1" title='@title' selected="true" class="panel">
         @results.map{r =>
             <fieldset>
                 <div class="row">

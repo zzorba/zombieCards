@@ -108,6 +108,7 @@ object Application extends Controller {
          List(dlink(zDeck, survivorLevel, "Draw", Some("draw"))),
          basicLinks(zDeck).toList)
     }
-    Ok(views.html.deck(headers, dlinks, links))
+    val title = "Level %s".format(survivorLevel.toString)
+    Ok(views.html.deck(title, headers, dlinks, links))
   }
 }
