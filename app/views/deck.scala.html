@@ -1,0 +1,13 @@
+@(resultText: String, links: Seq[LinkButton])
+
+@main(resultText){
+	<div class="toolbar">
+		<h1 id="pageTitle"></h1>
+	</div>
+
+	<div title='@resultText' class="panel" selected="true">
+    @links.map{t =>
+        <a class="@t.colorButton" href='@t.link' type="submit">@t.text</a>
+    }
+	</div>
+}
