@@ -1,0 +1,50 @@
+@(title: String, results: Seq[String], dlinks: Seq[DialogLink], links: Seq[LinkButton])
+
+@dlinks.map{d =>
+<form id='@d.id' title='@d.text' class="dialog" target="_self" name="formname" action='@d.link' method="GET">
+   <fieldset>
+       <h1>Search</h1>
+       <a class="button leftButton" type="cancel">Cancel</a>
+       <a class="button blueButton" type="submit">Draw!</a>
+
+       <div class="row">
+           <label for="select">How many cards?</label>
+           <select id="select" name="count" size="1">
+               <option value="1">1</option>
+               <option value="2">2</option>
+               <option value="3">3</option>
+               <option value="4">4</option>
+               <option value="5">5</option>
+               <option value="6">6</option>
+               <option value="7">7</option>
+               <option value="8">8</option>
+           </select>
+       </div>
+   </fieldset>
+   @d.params.map{x =>
+       <input type="hidden" name='@x._1' value='@x._2'/>
+   }
+   <input type="hidden" name="form" value="1"/>
+</form>
+}
+
+<div id="screen1" title='@title' selected="true" class="panel">
+@results.map{r =>
+    <fieldset>
+        <div class="row">
+            <h2 align="center">@r</h2>
+        </div>
+    </fieldset>
+}
+@dlinks.map{d =>
+    <fieldset>
+        <a class="@d.colorButton" href='#@d.id'
+           onclick="document.body.scrollTop = document.documentElement.scrollTop = 0;">@d.text</a>
+    </fieldset>
+}
+@links.map{t =>
+    <fieldset>
+        <a class="@t.colorButton" href='@t.link'>@t.text</a>
+    </fieldset>
+}
+</div>

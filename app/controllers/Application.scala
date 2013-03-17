@@ -32,10 +32,20 @@ object Application extends Controller {
       val deck = ZombieCardFactory.createDeck(Nil, set.ids.map(ZombieCardFactory.forId))
       LinkButton(set.name, "deck/?deck=%s&name=%s".format(ZombieCardFactory.reshuffle(deck).encode, set.name))
     })
-    Ok(views.html.index(decks))
+
+   Ok(views.html.index(decks))
   }
 
-  def deck(deck: String, level: Option[String], action: Option[String], count: Option[Int], name: Option[String]) = Action { request =>
+  def home = Action {
+    val decks = ZombieCardSet.SuggestedDecks.map(set => {
+      val deck = ZombieCardFactory.createDeck(Nil, set.ids.map(ZombieCardFactory.forId))
+      LinkButton(set.name, "deck/?deck=%s&name=%s".format(ZombieCardFactory.reshuffle(deck).encode, set.name))
+    })
+
+    Ok(views.html.indexFragment(decks))
+  }
+
+  def deck(deck: String, level: Option[String], action: Option[String], count: Option[Int], name: Option[String], form: Option[Boolean]) = Action { request =>
     val survivorLevel = level.flatMap(s => SurvivorLevel.values.find(_.toString == s)).getOrElse(SurvivorLevel.Blue)
     val zDeck = ZombieCardFactory.decode(deck)
     def link(d: Deck[ZombieCard], l: SurvivorLevel.Value,
@@ -63,7 +73,7 @@ object Application extends Controller {
       (if (d.drawPile.size > 1)
         List(link(d, survivorLevel, "Shuffle Draw Pile (%d)".format(d.drawPile.size), Some("shuffle-draw"), "gray"))
        else Nil) ++
-      List(LinkButton("End Game", "/", "red"))
+      List(LinkButton("End Game", "/home", "red"))
 
     val (headers, newDeck) = action.map(_.toLowerCase) match {
       case Some("draw") =>
@@ -116,6 +126,11 @@ object Application extends Controller {
       basicLinks(newDeck).toList
 
     val title = "Level %s".format(survivorLevel.toString)
-    Ok(views.html.deck(title, headers, dlinks, links))
+
+    if (form.exists(x => x)) {
+      Ok(views.html.deck(title, headers, dlinks, links))
+    } else {
+      Ok(views.html.deckFragment(title, headers, dlinks, links))
+    }
   }
 }
