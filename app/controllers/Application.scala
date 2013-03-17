@@ -58,7 +58,7 @@ object Application extends Controller {
         link(d, l, "Move to %s Level".format(l.toString), Some("level"))).toList ++
       List(LinkButton("End Game", "/", "red"))
 
-    val (headers, dlinks, links) = action.map(_.toLowerCase) match {
+    val (headers, newDeck) = action.map(_.toLowerCase) match {
       case Some("draw") =>
         val (cards, newDeck) = {
           val (c1, d1) = ZombieCardFactory.draw(zDeck)
@@ -84,30 +84,27 @@ object Application extends Controller {
             "All %s get an extra activation!".format(ZombieType.plural(zombieType, 2))
         })
 
-        (results,
-         if (newDeck.hasCards) {
-           List(dlink(newDeck, survivorLevel, "Draw", Some("draw")))
-         } else Nil,
-         (if (!newDeck.hasCards){
-           List(link(newDeck, survivorLevel, "Shuffle Deck", Some("shuffle")))
-         } else Nil) ++
-         basicLinks(newDeck).toList)
+        (results, newDeck)
       case Some("shuffle") =>
         val newDeck = ZombieCardFactory.reshuffle(zDeck)
-        (List("Reshuffled!"),
-         List(dlink(newDeck, survivorLevel, "Draw", Some("draw"))),
-         basicLinks(newDeck).toList)
+        (List("Reshuffled!"), newDeck)
       case Some("level") =>
-        (List("Now at %s level".format(survivorLevel.toString)),
-          if (zDeck.hasCards) List(dlink(zDeck, survivorLevel, "Draw", Some("draw"))) else Nil,
-          basicLinks(zDeck).toList)
+        (List("Now at %s level".format(survivorLevel.toString)), zDeck)
       case Some(x) =>
         throw new Exception("Unknown action=%s".format(x))
       case None =>
-        (List("Choose an action"),
-         List(dlink(zDeck, survivorLevel, "Draw", Some("draw"))),
-         basicLinks(zDeck).toList)
+        (List("Choose an action"), zDeck)
     }
+
+    val dlinks =
+      if (newDeck.hasCards) List(dlink(newDeck, survivorLevel, "Draw Multiple", Some("draw"))) else Nil
+    val links =
+      (if (!newDeck.hasCards)
+        List(link(newDeck, survivorLevel, "Shuffle Deck", Some("shuffle")))
+       else
+        List(link(newDeck, survivorLevel, "Draw One", Some("draw")))) ++
+      basicLinks(newDeck).toList
+
     val title = "Level %s".format(survivorLevel.toString)
     Ok(views.html.deck(title, headers, dlinks, links))
   }
