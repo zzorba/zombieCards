@@ -2,6 +2,7 @@ package com.zzorba.cards
 
 import com.zzorba.misc.Base64
 import scala.util.Random
+import java.net.URLDecoder
 
 trait CardFactory[T <: Card] {
   def forId(id: Byte): T
@@ -9,7 +10,7 @@ trait CardFactory[T <: Card] {
   def createDeck(discard: Seq[T], draw: Seq[T]): Deck[T]
 
   def decode(input: String): Deck[T] = {
-    input.split("-").toList match {
+    URLDecoder.decode(input, "UTF-8").split("-").toList match {
       case discard :: Nil =>
         createDeck(
           Base64.decode(discard).map(forId),

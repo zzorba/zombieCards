@@ -5,9 +5,24 @@ import play.api.mvc._
 import play.api.mvc.BodyParsers.parse
 import com.zzorba.cards.Deck
 import com.zzorba.zombicide._
+import java.net.URLEncoder
+
 
 case class LinkButton(text: String, link: String, color: String = "white") {
   val colorButton = "%sButton".format(color)
+}
+
+case class DialogLink(id: String, text: String, link: String, color: String = "white") {
+  val colorButton = "%sButton".format(color)
+
+  val (uri, params) = link.split("\\?").toList match {
+    case u :: p :: Nil => (u, p.split("\\&").map(_.split("\\=").toList match {
+      case k :: v :: Nil => (k, v)
+      case x => throw new Exception("Unknown '%s'".format(x.toString))
+    }))
+    case x =>
+      throw new Exception("Unknown '%s'".format(x.toString))
+  }
 }
 
 object Application extends Controller {
@@ -19,7 +34,7 @@ object Application extends Controller {
     Ok(views.html.index(decks))
   }
 
-  def deck(deck: String, level: Option[String], action: Option[String]) = Action { request =>
+  def deck(deck: String, level: Option[String], action: Option[String], count: Option[Int]) = Action { request =>
     val survivorLevel = level.flatMap(s => SurvivorLevel.values.find(_.toString == s)).getOrElse(SurvivorLevel.Blue)
     val zDeck = ZombieCardFactory.decode(deck)
     def link(d: Deck[ZombieCard], l: SurvivorLevel.Value,
@@ -30,16 +45,34 @@ object Application extends Controller {
       LinkButton(text, link)
     }
 
+    def dlink(d: Deck[ZombieCard], l: SurvivorLevel.Value,
+              text: String,
+              action: Option[String] = None,
+              id: String = "spawn"): DialogLink = {
+      val x = link(d, l, text, action)
+      DialogLink(id, x.text, x.link, x.color)
+    }
+
     def basicLinks(d: Deck[ZombieCard]): List[LinkButton] =
       SurvivorLevel.next(survivorLevel).map(l =>
         link(d, l, "Move to %s Level".format(l.toString), Some("level"))).toList ++
       List(LinkButton("End Game", "/", "red"))
 
-    val (header, links) = action.map(_.toLowerCase) match {
+    val (headers, dlinks, links) = action.map(_.toLowerCase) match {
       case Some("draw") =>
-        val (card, newDeck) = ZombieCardFactory.draw(zDeck)
-        val actionLink = if (newDeck.drawPile.isEmpty) "Shuffle" else "Draw"
-        val result = card.behaviors.forLevel(survivorLevel) match {
+        val (cards, newDeck) = {
+          val (c1, d1) = ZombieCardFactory.draw(zDeck)
+          (1 to count.getOrElse(1)).tail.foldLeft((List(c1), d1))((result, b) => {
+            if (result._2.drawPile.nonEmpty) {
+              val (c2, d2) = ZombieCardFactory.draw(result._2)
+              (result._1 ++ List(c2), d2)
+            } else {
+              result
+            }
+          })
+        }
+
+        val results = cards.map(_.behaviors.forLevel(survivorLevel) match {
           case ZombieBehavior.Clear =>
             "All Clear!"
 
@@ -49,23 +82,32 @@ object Application extends Controller {
 
           case ZombieBehavior.ExtraActivation(zombieType) =>
             "All %s get an extra activation!".format(ZombieType.plural(zombieType, 2))
-        }
+        })
 
-        (result,
-         link(newDeck, survivorLevel, actionLink, Some(actionLink)) :: basicLinks(newDeck).toList)
+        (results,
+         if (newDeck.drawPile.nonEmpty) {
+           List(dlink(newDeck, survivorLevel, "Draw", Some("draw")))
+         } else Nil,
+         (if (newDeck.drawPile.isEmpty){
+           List(link(newDeck, survivorLevel, "Shuffle Deck", Some("shuffle")))
+         } else Nil) ++
+         basicLinks(newDeck).toList)
       case Some("shuffle") =>
         val newDeck = ZombieCardFactory.reshuffle(zDeck)
-        ("Reshuffled!",
-          link(newDeck, survivorLevel, "Draw", Some("draw")) :: basicLinks(newDeck).toList)
+        (List("Reshuffled!"),
+         List(dlink(newDeck, survivorLevel, "Draw", Some("draw"))),
+         basicLinks(newDeck).toList)
       case Some("level") =>
-        ("Now at %s level".format(survivorLevel.toString),
-         link(zDeck, survivorLevel, "Draw", Some("draw")) :: basicLinks(zDeck).toList)
+        (List("Now at %s level".format(survivorLevel.toString)),
+         List(dlink(zDeck, survivorLevel, "Draw", Some("draw"))),
+         basicLinks(zDeck).toList)
       case Some(x) =>
         throw new Exception("Unknown action=%s".format(x))
       case None =>
-        ("Choose an action",
-         link(zDeck, survivorLevel, "Draw", Some("draw")) :: basicLinks(zDeck).toList)
+        (List("Choose an action"),
+         List(dlink(zDeck, survivorLevel, "Draw", Some("draw"))),
+         basicLinks(zDeck).toList)
     }
-    Ok(views.html.deck(header, links))
+    Ok(views.html.deck(headers, dlinks, links))
   }
 }
