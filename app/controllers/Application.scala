@@ -6,6 +6,7 @@ import play.api.mvc.BodyParsers.parse
 import com.zzorba.cards.Deck
 import com.zzorba.zombicide._
 import java.net.URLEncoder
+import util.Random
 
 
 case class LinkButton(text: String, link: String, color: String = "white") {
@@ -39,10 +40,11 @@ object Application extends Controller {
     val zDeck = ZombieCardFactory.decode(deck)
     def link(d: Deck[ZombieCard], l: SurvivorLevel.Value,
              text: String,
-             action: Option[String] = None): LinkButton = {
+             action: Option[String] = None,
+             color: String = "white"): LinkButton = {
       val link =
         "/deck/?deck=%s&level=%s%s".format(d.encode, l.toString, action.map(a => "&action=%s".format(a)).getOrElse(""))
-      LinkButton(text, link)
+      LinkButton(text, link, color)
     }
 
     def dlink(d: Deck[ZombieCard], l: SurvivorLevel.Value,
@@ -56,6 +58,9 @@ object Application extends Controller {
     def basicLinks(d: Deck[ZombieCard]): List[LinkButton] =
       SurvivorLevel.next(survivorLevel).map(l =>
         link(d, l, "Move to %s Level".format(l.toString), Some("level"))).toList ++
+      (if (d.drawPile.size > 1)
+        List(link(d, survivorLevel, "Shuffle Draw Pile (%d)".format(d.drawPile.size), Some("shuffle-draw"), "gray"))
+       else Nil) ++
       List(LinkButton("End Game", "/", "red"))
 
     val (headers, newDeck) = action.map(_.toLowerCase) match {
@@ -88,6 +93,9 @@ object Application extends Controller {
       case Some("shuffle") =>
         val newDeck = ZombieCardFactory.reshuffle(zDeck)
         (List("Reshuffled!"), newDeck)
+      case Some("shuffle-draw") =>
+        val newDeck = ZombieCardFactory.createDeck(zDeck.discardPile, Random.shuffle(zDeck.drawPile))
+        (List("Reshuffled the draw pile, no peeking!"), newDeck)
       case Some("level") =>
         (List("Now at %s level".format(survivorLevel.toString)), zDeck)
       case Some(x) =>
@@ -97,7 +105,7 @@ object Application extends Controller {
     }
 
     val dlinks =
-      if (newDeck.hasCards) List(dlink(newDeck, survivorLevel, "Draw Multiple", Some("draw"))) else Nil
+      if (newDeck.drawPile.size > 1) List(dlink(newDeck, survivorLevel, "Draw Multiple", Some("draw"))) else Nil
     val links =
       (if (!newDeck.hasCards)
         List(link(newDeck, survivorLevel, "Shuffle Deck", Some("shuffle")))
