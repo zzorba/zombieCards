@@ -1,6 +1,6 @@
 @(title: String, results: Seq[String], dlinks: Seq[DialogLink], links: Seq[LinkButton])
 
-@main("Zombicide"){
+@main("Zombie Cards"){
     @dlinks.map{d =>
        <form id='@d.id' title='@d.text' class="dialog" target="_self" name="formname" action='@d.link' method="GET">
            <fieldset>
