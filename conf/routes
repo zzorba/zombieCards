@@ -8,3 +8,4 @@ GET     /deck/                      controllers.Application.deck(deck: String, l
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET     /images/custom_icon.png     controllers.Assets.at(path="/public", file="custom_icon.png")
