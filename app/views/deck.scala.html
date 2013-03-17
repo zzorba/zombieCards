@@ -41,14 +41,16 @@
                 </div>
             </fieldset>
         }
-        <fieldset>
-            @dlinks.map{d =>
+        @dlinks.map{d =>
+            <fieldset>
                 <a class="@d.colorButton" href='#@d.id' type="submit"
                    onclick="document.body.scrollTop = document.documentElement.scrollTop = 0;">@d.text</a>
-            }
-            @links.map{t =>
+            </fieldset>
+        }
+        @links.map{t =>
+            <fieldset>
                 <a class="@t.colorButton" href='@t.link' type="submit">@t.text</a>
-            }
-        </fieldset>
+            </fieldset>
+        }
     </div>
 }

@@ -30,12 +30,12 @@ object Application extends Controller {
   def index = Action {
     val decks = ZombieCardSet.SuggestedDecks.map(set => {
       val deck = ZombieCardFactory.createDeck(Nil, set.ids.map(ZombieCardFactory.forId))
-      LinkButton(set.name, "deck/?deck=%s".format(ZombieCardFactory.reshuffle(deck).encode))
+      LinkButton(set.name, "deck/?deck=%s&name=%s".format(ZombieCardFactory.reshuffle(deck).encode, set.name))
     })
     Ok(views.html.index(decks))
   }
 
-  def deck(deck: String, level: Option[String], action: Option[String], count: Option[Int]) = Action { request =>
+  def deck(deck: String, level: Option[String], action: Option[String], count: Option[Int], name: Option[String]) = Action { request =>
     val survivorLevel = level.flatMap(s => SurvivorLevel.values.find(_.toString == s)).getOrElse(SurvivorLevel.Blue)
     val zDeck = ZombieCardFactory.decode(deck)
     def link(d: Deck[ZombieCard], l: SurvivorLevel.Value,
@@ -103,7 +103,7 @@ object Application extends Controller {
       case Some(x) =>
         throw new Exception("Unknown action=%s".format(x))
       case None =>
-        (List("Bring it on!"), zDeck)
+        (List(name.map(deckName => "Deck: %s".format(deckName)).getOrElse("Bring it on!")), zDeck)
     }
 
     val dlinks =

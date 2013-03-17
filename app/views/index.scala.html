@@ -7,7 +7,9 @@
 
     <div id="screen1" title="Choose a Deck" class="panel" selected="true">
     @decks.map{t =>
-        <a class="@t.colorButton" href='@t.link' type="submit">@t.text</a>
+        <fieldset>
+          <a class="@t.colorButton" href='@t.link' type="submit">@t.text</a>
+        </fieldset>
     }
 
     <a class="grayButton" href="http://guillotinegames.com/en/blog-zombie-cards-secrets" type="submit">Explanation of Card Sets</a>
