@@ -63,7 +63,7 @@ object Application extends Controller {
         val (cards, newDeck) = {
           val (c1, d1) = ZombieCardFactory.draw(zDeck)
           (1 to count.getOrElse(1)).tail.foldLeft((List(c1), d1))((result, b) => {
-            if (result._2.drawPile.nonEmpty) {
+            if (result._2.hasCards) {
               val (c2, d2) = ZombieCardFactory.draw(result._2)
               (result._1 ++ List(c2), d2)
             } else {
@@ -85,10 +85,10 @@ object Application extends Controller {
         })
 
         (results,
-         if (newDeck.drawPile.nonEmpty) {
+         if (newDeck.hasCards) {
            List(dlink(newDeck, survivorLevel, "Draw", Some("draw")))
          } else Nil,
-         (if (newDeck.drawPile.isEmpty){
+         (if (!newDeck.hasCards){
            List(link(newDeck, survivorLevel, "Shuffle Deck", Some("shuffle")))
          } else Nil) ++
          basicLinks(newDeck).toList)
@@ -99,8 +99,8 @@ object Application extends Controller {
          basicLinks(newDeck).toList)
       case Some("level") =>
         (List("Now at %s level".format(survivorLevel.toString)),
-         List(dlink(zDeck, survivorLevel, "Draw", Some("draw"))),
-         basicLinks(zDeck).toList)
+          if (zDeck.hasCards) List(dlink(zDeck, survivorLevel, "Draw", Some("draw"))) else Nil,
+          basicLinks(zDeck).toList)
       case Some(x) =>
         throw new Exception("Unknown action=%s".format(x))
       case None =>

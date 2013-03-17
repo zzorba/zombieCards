@@ -7,6 +7,8 @@ trait Deck[T <: Card] {
   def discardPile: Seq[T]
   def drawPile: Seq[T]
 
+  def hasCards: Boolean = drawPile.nonEmpty
+
   def encode: String = {
     URLEncoder.encode(Base64.encode(discardPile.map(_.id)) + "-" + Base64.encode(drawPile.map(_.id)), "UTF-8")
   }
