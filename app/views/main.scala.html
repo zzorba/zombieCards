@@ -15,6 +15,11 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
+    <script type="text/javascript">
+        if (window.screen.height==568) { // iPhone 4"
+            document.querySelector("meta[name=viewport]").content="width=320.1";
+        }
+    </script>
     <link rel="icon" type="image/png" href="/assets/favicon.ico" />
     <link rel="apple-touch-icon" href="/custom_icon.png"/>
     <meta name="apple-mobile-web-app-capable" content="yes">
