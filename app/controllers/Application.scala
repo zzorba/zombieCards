@@ -101,7 +101,7 @@ object Application extends Controller {
       case Some(x) =>
         throw new Exception("Unknown action=%s".format(x))
       case None =>
-        (List("Choose an action"), zDeck)
+        (List("Bring it on!"), zDeck)
     }
 
     val dlinks =

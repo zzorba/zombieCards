@@ -1,4 +1,3 @@
-This is your new Play 2.0 application
-=====================================
+A simple stateless web framework for spawning cards for the popular board game, Zombicide.
 
-This file will be packaged with your application, when using `play dist`.
+Build with Scala using Play 2.0 and the iUI CSS framework (https://code.google.com/p/iui/)
