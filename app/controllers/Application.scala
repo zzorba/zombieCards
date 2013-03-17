@@ -57,7 +57,9 @@ object Application extends Controller {
 
     def basicLinks(d: Deck[ZombieCard]): List[LinkButton] =
       SurvivorLevel.next(survivorLevel).map(l =>
-        link(d, l, "Move to %s Level".format(l.toString), Some("level"))).toList ++
+        link(d, l, "Move up to %s Level".format(l.toString), Some("level"))).toList ++
+      SurvivorLevel.previous(survivorLevel).map(l =>
+          link(d, l, "Move down to %s Level".format(l.toString), Some("level"))).toList ++
       (if (d.drawPile.size > 1)
         List(link(d, survivorLevel, "Shuffle Draw Pile (%d)".format(d.drawPile.size), Some("shuffle-draw"), "gray"))
        else Nil) ++

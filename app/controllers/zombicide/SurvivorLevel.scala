@@ -12,4 +12,11 @@ object SurvivorLevel extends Enumeration {
     case SurvivorLevel.Orange => Some(SurvivorLevel.Red)
     case SurvivorLevel.Red => None
   }
+
+  def previous(level: SurvivorLevel.Value): Option[SurvivorLevel.Value] = level match {
+    case SurvivorLevel.Blue => None
+    case SurvivorLevel.Yellow => Some(SurvivorLevel.Blue)
+    case SurvivorLevel.Orange => Some(SurvivorLevel.Yellow)
+    case SurvivorLevel.Red => Some(SurvivorLevel.Orange)
+  }
 }
