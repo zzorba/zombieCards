@@ -30,7 +30,7 @@ object Application extends Controller {
   def index = Action {
     val decks = ZombieCardSet.SuggestedDecks.map(set => {
       val deck = ZombieCardFactory.createDeck(Nil, set.ids.map(ZombieCardFactory.forId))
-      LinkButton(set.name, "deck/?deck=%s&name=%s".format(ZombieCardFactory.reshuffle(deck).encode, set.name))
+      LinkButton(set.name, "/deck/?deck=%s&name=%s".format(ZombieCardFactory.reshuffle(deck).encode, set.name))
     })
 
    Ok(views.html.index(decks))
@@ -39,7 +39,7 @@ object Application extends Controller {
   def home = Action {
     val decks = ZombieCardSet.SuggestedDecks.map(set => {
       val deck = ZombieCardFactory.createDeck(Nil, set.ids.map(ZombieCardFactory.forId))
-      LinkButton(set.name, "deck/?deck=%s&name=%s".format(ZombieCardFactory.reshuffle(deck).encode, set.name))
+      LinkButton(set.name, "/deck/?deck=%s&name=%s".format(ZombieCardFactory.reshuffle(deck).encode, set.name))
     })
 
     Ok(views.html.indexFragment(decks))
@@ -127,10 +127,11 @@ object Application extends Controller {
 
     val title = "Level %s".format(survivorLevel.toString)
 
+    val id = Random.nextString(48)
     if (form.exists(x => x)) {
-      Ok(views.html.deck(title, headers, dlinks, links))
+      Ok(views.html.deck(id, title, headers, dlinks, links))
     } else {
-      Ok(views.html.deckFragment(title, headers, dlinks, links))
+      Ok(views.html.deckFragment(id, title, headers, dlinks, links))
     }
   }
 }

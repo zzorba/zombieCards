@@ -1,9 +1,5 @@
-@(title: String, results: Seq[String], dlinks: Seq[DialogLink], links: Seq[LinkButton])
+@(id: String, title: String, results: Seq[String], dlinks: Seq[DialogLink], links: Seq[LinkButton])
 
 @main("Zombie Cards"){
-    <div class="toolbar">
-        <h1 id="pageTitle"></h1>
-    </div>
-
-    @deckFragment(title, results, dlinks, links)
+    @deckFragment(id, title, results, dlinks, links)
 }
