@@ -1,11 +1,11 @@
 @(decks: Seq[LinkButton]) {
-    <div id="screen1" title="Choose a Deck" class="panel" selected="true">
-    @decks.map{t =>
-        <fieldset>
-          <a class="@t.colorButton" href='@t.link'>@t.text</a>
-        </fieldset>
-    }
+    <div id="home" title="Choose a Deck" class="panel" selected="true">
+        @decks.map{t =>
+            <fieldset>
+              <a class="@t.colorButton" href='@t.link'>@t.text</a>
+            </fieldset>
+        }
 
-    <a class="grayButton" href="http://guillotinegames.com/en/blog-zombie-cards-secrets" type="submit">Explanation of Card Sets</a>
+        <a class="grayButton" href="http://guillotinegames.com/en/blog-zombie-cards-secrets" type="submit">Explanation of Card Sets</a>
     </div>
 }

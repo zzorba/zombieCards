@@ -42,7 +42,7 @@ object Application extends Controller {
       LinkButton(set.name, "/deck/?deck=%s&name=%s".format(ZombieCardFactory.reshuffle(deck).encode, set.name))
     })
 
-    Ok(views.html.indexFragment(decks))
+    Ok(views.html.index(decks))
   }
 
   def deck(deck: String, level: Option[String], action: Option[String], count: Option[Int], name: Option[String], form: Option[Boolean]) = Action { request =>
@@ -127,11 +127,7 @@ object Application extends Controller {
 
     val title = "Level %s".format(survivorLevel.toString)
 
-    val id = Random.nextString(48)
-    if (form.exists(x => x)) {
-      Ok(views.html.deck(id, title, headers, dlinks, links))
-    } else {
-      Ok(views.html.deckFragment(id, title, headers, dlinks, links))
-    }
+    val id = Random.nextInt().toString
+    Ok(views.html.deck(id, title, headers, dlinks, links))
   }
 }
