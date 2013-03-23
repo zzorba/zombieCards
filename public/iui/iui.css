@@ -207,7 +207,7 @@ a[target="_replace"] {
 body > .dialog {
     top: 0;
     width: 100%;
-    min-height: 505px;
+    min-height: 568px;
     z-index: 2;
     background: rgba(0, 0, 0, 0.8);
     padding: 0;
