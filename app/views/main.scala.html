@@ -1,4 +1,4 @@
-@(title: String)(content: Html)
+@(title: String, currentUrl: String, restore: Boolean)(content: Html)
 
 <!DOCTYPE html>
 
@@ -16,11 +16,29 @@
       })();
     </script>
     <script type="text/javascript">
+        var currentUrl = '@Html(currentUrl)'
+        if (@restore) {
+            var storedUrl = localStorage.getItem('url');
+            localStorage.removeItem('url');
+            if (storedUrl) {
+              window.location.href = storedUrl;
+            }
+        } else {
+            if (currentUrl) {
+                localStorage.setItem('url', currentUrl);
+            } else {
+                localStorage.removeItem('url');
+            }
+        }
         window.onload=function() {
             if (window.screen.height==568) { // iPhone 5
                 document.querySelector("meta[name=viewport]").content="width=320.1";
             }
-            (function(a,b,c){if(c in b&&b[c]){var d,e=a.location,f=/^(a|html)$/i;a.addEventListener("click",function(a){d=a.target;while(!f.test(d.nodeName))d=d.parentNode;"href"in d&&(d.href.indexOf("http")||~d.href.indexOf(e.host))&&(a.preventDefault(),e.href=d.href)},!1)}})(document,window.navigator,"standalone")
+            document.body.addEventListener('afterinsert', function(e){
+               if (e.insertedNode.getAttribute('name') == 'deck') {
+                   localStorage.setItem('url', e.insertedNode.getElementsByTagName('a')[0].getAttribute('href'));
+                }
+            }, false);
         }
     </script>
     <link rel="icon" type="image/png" href="/assets/favicon.ico" />

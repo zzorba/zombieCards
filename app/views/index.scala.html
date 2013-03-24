@@ -1,5 +1,8 @@
-@(decks: Seq[LinkButton])
+@(decks: Seq[LinkButton], restore: Boolean)
 
-@main("Zombie Cards") {
+@main("Zombie Cards", "", restore) {
     @indexFragment(decks)
+    <div id="root" selected="false" class="panel" name="deck">
+        <a name="link" href="" style="visibility:hidden;"/>
+    </div>
 }

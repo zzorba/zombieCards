@@ -33,7 +33,7 @@ object Application extends Controller {
       LinkButton(set.name, "/deck/?deck=%s&name=%s".format(ZombieCardFactory.reshuffle(deck).encode, set.name))
     })
 
-   Ok(views.html.index(decks))
+   Ok(views.html.index(decks, true))
   }
 
   def home = Action {
@@ -42,10 +42,15 @@ object Application extends Controller {
       LinkButton(set.name, "/deck/?deck=%s&name=%s".format(ZombieCardFactory.reshuffle(deck).encode, set.name))
     })
 
-    Ok(views.html.index(decks))
+    Ok(views.html.index(decks, false))
   }
 
-  def deck(deck: String, level: Option[String], action: Option[String], count: Option[Int], name: Option[String], form: Option[Boolean]) = Action { request =>
+  def deck(deck: String,
+           level: Option[String],
+           action: Option[String],
+           count: Option[Int],
+           name: Option[String],
+           form: Option[Boolean]) = Action { request =>
     val survivorLevel = level.flatMap(s => SurvivorLevel.values.find(_.toString == s)).getOrElse(SurvivorLevel.Blue)
     val zDeck = ZombieCardFactory.decode(deck)
     def link(d: Deck[ZombieCard], l: SurvivorLevel.Value,
@@ -128,6 +133,17 @@ object Application extends Controller {
     val title = "Level %s".format(survivorLevel.toString)
 
     val id = Random.nextInt().toString
-    Ok(views.html.deck(id, title, headers, dlinks, links))
+    val url = {
+      "/deck/?deck=%s&form=1".format(zDeck.encode) +
+        level.map(l => "&level=%s".format(l)).getOrElse("") +
+        action.map(a => "&action=%s".format(a)).getOrElse("") +
+        count.map(c => "&count=%d".format(c)).getOrElse("") +
+        name.map(n => "&name=%s".format(n)).getOrElse("")
+    }
+    if (form.exists(x => x)) {
+      Ok(views.html.deck(url, id, title, headers, dlinks, links))
+    } else {
+      Ok(views.html.deckFragment(url, id, title, headers, dlinks, links))
+    }
   }
 }

@@ -1,34 +1,35 @@
-@(id: String, title: String, results: Seq[String], dlinks: Seq[DialogLink], links: Seq[LinkButton])
+@(url: String, id: String, title: String, results: Seq[String], dlinks: Seq[DialogLink], links: Seq[LinkButton])
 
 @dlinks.map{d =>
-<form id='@id@d.id' title='@d.text' class="dialog" target="_self" name="formname" action='@d.link' method="GET">
-   <fieldset>
-       <h1>Draw Multiple</h1>
-       <a class="button leftButton" type="cancel">Cancel</a>
-       <a class="button blueButton" type="submit">Draw!</a>
 
-       <div class="row">
-           <label for="select">How many cards?</label>
-           <select id="select" name="count" size="1">
-               <option value="1">1</option>
-               <option value="2">2</option>
-               <option value="3">3</option>
-               <option value="4">4</option>
-               <option value="5">5</option>
-               <option value="6">6</option>
-               <option value="7">7</option>
-               <option value="8">8</option>
-           </select>
-       </div>
-   </fieldset>
-   @d.params.map{x =>
-       <input type="hidden" name='@x._1' value='@x._2'/>
-   }
-   <input type="hidden" name="form" value="1"/>
-</form>
+    <form id="@id@d.id" title="@d.text" class="dialog" target="_self" name="formname" action="@d.uri" method="GET">
+		<fieldset>
+            <h1>Draw</h1>
+            <a class="button leftButton" type="cancel">Cancel</a>
+            <a class="button blueButton" type="submit">Draw</a>
+            <div class="row">
+                <label for="count">How many cards?</label>
+                <select id="count" name="count" size="1">
+                   <option value="1">1</option>
+                   <option value="2">2</option>
+                   <option value="3">3</option>
+                   <option value="4" selected="true">4</option>
+                   <option value="5">5</option>
+                   <option value="6">6</option>
+                   <option value="7">7</option>
+                   <option value="8">8</option>
+                </select>
+            </div>
+            @d.params.map{x =>
+                <input type="hidden" id="@x._1" name='@x._1' value='@x._2'/>
+            }
+            <input type="hidden" id="form" name="form" value="1"/>
+		</fieldset>
+    </form>
 }
 
-<div id="@id" title="@title" selected="true" class="panel">
+<div id="@id" title="@title" selected="true" class="panel" name="deck">
+    <a name="link" href="@url" style="visibility:hidden;">@url</a>
     @results.map{r =>
         <fieldset>
             <div class="row">

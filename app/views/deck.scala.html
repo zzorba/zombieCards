@@ -1,5 +1,5 @@
-@(id: String, title: String, results: Seq[String], dlinks: Seq[DialogLink], links: Seq[LinkButton])
+@(url: String, id: String, title: String, results: Seq[String], dlinks: Seq[DialogLink], links: Seq[LinkButton])
 
-@main("Zombie Cards"){
-    @deckFragment(id, title, results, dlinks, links)
+@main("Zombie Cards", url, false){
+    @deckFragment(url, id, title, results, dlinks, links)
 }
