@@ -4,11 +4,18 @@ import com.zzorba.cards.Card
 
 sealed trait ZombieBehavior
 
+object ZType extends Enumeration {
+  val Normal = Value("normal")
+  val Toxic = Value("toxic")
+  val Berserker = Value("berserker")
+}
+
 object ZombieType extends Enumeration {
   val Walker = Value("walker")
   val Fatty = Value("fatty")
   val Runner = Value("runner")
   val Abomination = Value("abomination")
+  val Dog = Value("dog")
 
   def plural(zombieType: ZombieType.Value, count: Int): String = {
     if (count == 1) zombieType match {
@@ -16,22 +23,45 @@ object ZombieType extends Enumeration {
       case ZombieType.Fatty => "Fatty"
       case ZombieType.Runner => "Runner"
       case ZombieType.Abomination => "Abomination"
+      case ZombieType.Dog => "Dog"
     } else zombieType match {
       case ZombieType.Walker => "Walkers"
       case ZombieType.Fatty => "Fatties"
       case ZombieType.Runner => "Runners"
       case ZombieType.Abomination => "Abominations"
+      case ZombieType.Dog => "Dogs"
     }
   }
 }
 object ZombieBehavior {
   case object Clear extends ZombieBehavior
 
-  case class Spawn(zombieType: ZombieType.Value, count: Int, sewer: Boolean) extends ZombieBehavior
-  def SpawnWalkers(count: Int, sewer: Boolean = false) = Spawn(ZombieType.Walker, count, sewer)
-  def SpawnFatties(count: Int, sewer: Boolean = false) = Spawn(ZombieType.Fatty, count, sewer)
-  def SpawnRunners(count: Int, sewer: Boolean = false) = Spawn(ZombieType.Runner, count, sewer)
-  def SpawnAbomination = Spawn(ZombieType.Abomination, 1, sewer = false)
+  case class Spawn(zombieType: ZombieType.Value,
+                   count: Int,
+                   zType: ZType.Value,
+                   sewer: Boolean) extends ZombieBehavior
+
+  def SpawnWalkers(count: Int,
+                   zType: ZType.Value = ZType.Normal,
+                   sewer: Boolean = false) =
+    Spawn(ZombieType.Walker, count, zType, sewer)
+
+  def SpawnFatties(count: Int,
+                   zType: ZType.Value = ZType.Normal,
+                   sewer: Boolean = false) =
+    Spawn(ZombieType.Fatty, count, zType, sewer)
+
+  def SpawnRunners(count: Int,
+                   zType: ZType.Value = ZType.Normal,
+                   sewer: Boolean = false) =
+    Spawn(ZombieType.Runner, count, zType, sewer)
+
+  def SpawnAbom(zType: ZType.Value = ZType.Normal) =
+    Spawn(ZombieType.Abomination, 1, zType, sewer = false)
+
+  def SpawnDogs(count: Int, sewer: Boolean = false) =
+    Spawn(ZombieType.Dog, count, ZType.Normal, sewer)
+
 
   case class ExtraActivation(zombieType: ZombieType.Value) extends ZombieBehavior
   val ExtraActivationWalkers = ExtraActivation(ZombieType.Walker)
