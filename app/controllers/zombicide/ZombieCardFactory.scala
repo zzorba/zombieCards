@@ -103,7 +103,7 @@ object ZombieCardFactory extends CardFactory[ZombieCard] {
     81 -> ZombieBehaviors(SpawnWalkers(2, ZType.Berserker), SpawnWalkers(2, ZType.Berserker), SpawnWalkers(3, ZType.Berserker), SpawnFatties(4, ZType.Berserker)),
     82 -> ZombieBehaviors(SpawnWalkers(2, ZType.Berserker), SpawnAbom(ZType.Berserker),       SpawnRunners(2, ZType.Berserker), SpawnWalkers(5, ZType.Berserker)),
     83 -> ZombieBehaviors(SpawnWalkers(1, ZType.Berserker), SpawnWalkers(4, ZType.Berserker), SpawnAbom(ZType.Berserker),       SpawnRunners(3, ZType.Berserker)),
-    84 -> ZombieBehaviors(SpawnWalkers(1, ZType.Berserker), SpawnWalkers(2, ZType.Berserker), SpawnWalkers(6, ZType.Berserker), SpawnAbom(ZType.Berserker))
+    84 -> ZombieBehaviors(SpawnWalkers(1, ZType.Berserker), SpawnWalkers(2, ZType.Berserker), SpawnWalkers(6, ZType.Berserker), SpawnAbom(ZType.Berserker)),
     85 -> ZombieBehaviors(SpawnFatties(1, ZType.Berserker), SpawnRunners(1, ZType.Berserker), SpawnWalkers(3, ZType.Berserker), SpawnWalkers(8, ZType.Berserker)),
     86 -> ZombieBehaviors(SpawnRunners(1, ZType.Berserker), SpawnWalkers(3, ZType.Berserker), SpawnFatties(2, ZType.Berserker), SpawnWalkers(5, ZType.Berserker)),
     87 -> ZombieBehaviors(SpawnWalkers(1, ZType.Berserker), SpawnFatties(2, ZType.Berserker), SpawnWalkers(5, ZType.Berserker), SpawnRunners(3, ZType.Berserker)),

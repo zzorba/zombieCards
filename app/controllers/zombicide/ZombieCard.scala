@@ -17,8 +17,13 @@ object ZombieType extends Enumeration {
   val Abomination = Value("abomination")
   val Dog = Value("dog")
 
-  def plural(zombieType: ZombieType.Value, count: Int): String = {
-    if (count == 1) zombieType match {
+  def plural(zombieType: ZombieType.Value, zType: ZType.Value, count: Int): String = {
+    (zType match {
+      case ZType.Normal => ""
+      case ZType.Toxic => "Toxic "
+      case ZType.Berserker => "Berserker "
+    }) +
+    (if (count == 1) zombieType match {
       case ZombieType.Walker => "Walker"
       case ZombieType.Fatty => "Fatty"
       case ZombieType.Runner => "Runner"
@@ -30,7 +35,7 @@ object ZombieType extends Enumeration {
       case ZombieType.Runner => "Runners"
       case ZombieType.Abomination => "Abominations"
       case ZombieType.Dog => "Dogs"
-    }
+    })
   }
 }
 object ZombieBehavior {

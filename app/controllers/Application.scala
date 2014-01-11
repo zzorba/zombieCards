@@ -98,12 +98,12 @@ object Application extends Controller {
           case ZombieBehavior.Clear =>
             "All Clear!"
 
-          case ZombieBehavior.Spawn(zombieType, count, sewer) =>
-            "Spawn %d %s%s".format(count, ZombieType.plural(zombieType, count),
+          case ZombieBehavior.Spawn(zombieType, count, zType, sewer) =>
+            "Spawn %d %s%s".format(count, ZombieType.plural(zombieType, zType, count),
               if (sewer) " on each sewer marker that is on a tile containing a survivor" else "")
 
           case ZombieBehavior.ExtraActivation(zombieType) =>
-            "All %s get an extra activation!".format(ZombieType.plural(zombieType, 2))
+            "All %s get an extra activation!".format(ZombieType.plural(zombieType, ZType.Normal, 2))
         })
 
         (results, newDeck)
